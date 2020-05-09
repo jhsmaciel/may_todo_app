@@ -36,7 +36,7 @@ export default function Doing ({ navigation }){
                 accessoryRight={() => ReloadAction(getData)}
             />
             <Divider />
-            <Layout style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Layout level="2" style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             {
                     loading ?
                         (
@@ -52,9 +52,9 @@ export default function Doing ({ navigation }){
                             :
                                 (
                                     <List
-                                        style={{ flex: 1, width: '95%', paddingTop: 10, backgroundColor: "#FFF" }}
+                                        style={{ flex: 1, width: '100%', padding: 10 }}
                                         data={tarefas}
-                                        renderItem={(props) => <Card {...props} />}
+                                        renderItem={(props) => <Card setList={setTarefas} {...props} />}
                                     />
                                 )
                         )

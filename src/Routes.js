@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Todo from './screens/Todo';
+import { navigationRef } from './services/Navigation';
 import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BottomNavigation, BottomNavigationTab, Icon, Drawer, DrawerItem, Divider, Layout, Text, IndexPath } from '@ui-kitten/components';
+import { BottomNavigation, BottomNavigationTab, Icon, Drawer, DrawerItem, Divider, Layout, Text, IndexPath, Button } from '@ui-kitten/components';
 import { ImageBackground } from 'react-native';
+import { ThemeContext } from './theme-context';
 
 // Bottom tab Navigator
 const Tab = createBottomTabNavigator();
@@ -55,32 +58,42 @@ const Header = (props) => (
     </>
 );
 
-const Footer = (props) => (
-    <>
-        <Layout style={{
-            height: '5%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-        }}>
-            
-        </Layout>
-        <Divider />
-    </>
-);
+function Footer (props) {
+    return (
+        <>
+            <Layout style={{
+                height: '5%',
+                width: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Button 
+                    size="small"
+                    appearance="ghost" 
+                    accessoryLeft={(props) => <Icon {...props} name="toggle-left-outline" />}
+                    onPress={props.toggle}
+                >
+                    Toggle Theme
+                </Button>
+            </Layout>
+            <Divider />
+        </>
+    );
+};
 
 const DrawerContent = ({ navigation, state }) => {
 
     const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
+    const themeContext = useContext(ThemeContext);
     
     return (
         <Drawer
             header={Header}
-            footer={Footer}
+            footer={() => <Footer toggle={themeContext.toggleTheme} />}
             selectedIndex={selectedIndex}
             onSelect={index => {
-                setSelectedIndex(index)
-                navigation.navigate(state.routeNames[index.row])
+                    setSelectedIndex(index)
+                    navigation.navigate(state.routeNames[index.row])
                 }
             }
         >
@@ -90,17 +103,20 @@ const DrawerContent = ({ navigation, state }) => {
     );
 };
 
-export const DrawerNavigator = () => (
+const DrawerNavigator = () => (
     <DrawerNavigation.Navigator drawerContent={props => <DrawerContent {...props}/>}>
         <DrawerNavigation.Screen name='Criar' component={Todo.Create}/>
-        <DrawerNavigation.Screen  name='Listar' component={TabNavigator}/>
+        <DrawerNavigation.Screen name='Listar' component={TabNavigator}/>
+        <DrawerNavigation.Screen name='Atualizar' component={Todo.Update}/>
     </DrawerNavigation.Navigator>
 );
 
+const TopStackComp = createStackNavigator();
+
 export default function Routes() {
     return (
-        <NavigationContainer >
+        <NavigationContainer ref={navigationRef}>
             <DrawerNavigator />
         </NavigationContainer>
-    )
+    );
 };

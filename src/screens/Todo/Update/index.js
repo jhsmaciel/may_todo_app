@@ -1,33 +1,30 @@
 import React, { useState, useContext } from 'react'
 import { Layout, Button, TopNavigation, Divider, Icon, Text, Input } from '@ui-kitten/components';
-import { postTarefa } from '../../../utils/requesters/tarefas'
+import { updateTarefa } from '../../../utils/requesters/tarefas'
 import { SafeAreaView } from 'react-native';
 import { MenuAction } from '../../../components/menu';
 
-const statusEnum = {
-    TODO: "TODO",
-    DOING: "DOING",
-    DONE: "DONE"
-}
+export default function Update ({ navigation }){
+    const tarefa = navigation?.params?.tarefa
 
-export default function Create ({ navigation }){
-    const [titulo, setTitulo] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [selectedIndex, setSelectedIndex] = useState(statusEnum.TODO);
+    const [titulo, setTitulo] = useState(tarefa?.titulo);
+    const [descricao, setDescricao] = useState(tarefa?.descricao);
+    const [selectedIndex, setSelectedIndex] = useState(tarefa?.status);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [message, setMessage] = useState('');
 
-    async function _handleCadastro(){
+    async function _handleAtualizar(){
         try {
             setError(false)
             setLoading(true);
-            await postTarefa({
+            await updateTarefa({
+                id: tarefa.id,
                 titulo,
                 descricao,
                 status: selectedIndex
             });
-            setMessage('A tarefa foi cadastrada com sucesso!');
+            setMessage('A tarefa foi alterada com sucesso!');
         } catch (error) {
             setMessage('Ocorreu algum erro, por favor tente novamente!');
             setError(true)
@@ -44,7 +41,7 @@ export default function Create ({ navigation }){
         <SafeAreaView style={{flex: 1}}>
             <TopNavigation 
                 accessoryLeft={() => MenuAction(navigation)} 
-                title={() => <Text category="h5">Cadastrar Tarefa</Text>}
+                title={() => <Text category="h5">Alterar Tarefa</Text>}
                 alignment="center"
             />
             <Divider />
@@ -74,13 +71,13 @@ export default function Create ({ navigation }){
             <Layout style={{ position: 'absolute', bottom: 5, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
                 <Button 
                     accessoryLeft={CadastroIcon}
-                    onPress={_handleCadastro}
+                    onPress={_handleAtualizar}
                     disabled={loading}
                     style={{
                         width: '85%'
                     }}
                 >
-                        Cadastrar Tarefa
+                    Alterar Tarefa
                 </Button>
             </Layout>
         </SafeAreaView>

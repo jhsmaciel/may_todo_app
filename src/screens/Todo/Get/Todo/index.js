@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, TopNavigation, Divider, Spinner, List, Text } from '@ui-kitten/components';
+import { Layout, TopNavigation, Divider, Spinner, List, Text, Modal, Card as CardKitten, Button } from '@ui-kitten/components';
 import { SafeAreaView, RefreshControl, ScrollView, ToastAndroid, } from 'react-native';
 import { getTarefas } from '../../../../utils/requesters/tarefas';
 import { Card } from '../../../../components/card';
 import { MenuAction, ReloadAction } from '../../../../components/menu';
+import { TarefaProvider } from '../../../../tarefa-context';
+import { ModalEdit } from '../../../../components/modal';
 
 export default function Todo ({ navigation }){
     const [tarefas, setTarefas] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [item, setItem] = useState({});
 
     useEffect(() => {
         getData()
@@ -36,7 +40,12 @@ export default function Todo ({ navigation }){
                 accessoryRight={() => ReloadAction(getData)}
             />
             <Divider />
-            <Layout  style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
+            <ModalEdit
+                item={item}
+                setVisible={setVisible}
+                visible={visible}
+            />
+            <Layout level="2" style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
                 {
                     loading ?
                         (
@@ -49,11 +58,18 @@ export default function Todo ({ navigation }){
 
                             )
                         :
-                            (
+                            (   
                                 <List
-                                    style={{ flex: 1, width: '95%', paddingTop: 10, backgroundColor: "#FFF" }}
+                                    style={{ flex: 1, width: '100%', padding: 10 }}
                                     data={tarefas}
-                                    renderItem={(props) => <Card setList={setTarefas} {...props} />}
+                                    renderItem={(props) => <Card 
+                                        callback={(item) => { 
+                                            setVisible(true);
+                                            setItem(item )
+                                        }}
+                                        setList={setTarefas} 
+                                        {...props} 
+                                    />}
                                 />
                             )
                 }

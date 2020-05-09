@@ -13,9 +13,18 @@ export async function getTarefas(status = "TODO") {
     }
 }
 
-export async function postTarefas(tarefa) {
+export async function updateTarefa(tarefa) {
     try {
         const { data } = await api.post(`/tarefas/${tarefa.id}`, tarefa)
+        return data
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function postTarefa(tarefa) {
+    try {
+        const { data } = await api.post(`/tarefas`, tarefa)
         return data
     } catch (error) {
         throw error
